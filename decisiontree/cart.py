@@ -3,7 +3,7 @@ from itertools import groupby
 
 class Cart:
     def __init__(self):
-        print(self)
+        print('Init')
 
     def getTrainingDataset(self):
         trainingDataset = []
@@ -13,14 +13,26 @@ class Cart:
                 trainingDataset.append(row)
         return trainingDataset
 
-    def extractOutputClassSet(self, totalTrainingDataset):
-        return [i[-1] for i in totalTrainingDataset]
+    def extractColumnValuesAtIndex(self, totalTrainingDataset, index):
+        return [i[index] for i in totalTrainingDataset]
+
+    def groupByValue(self, inputArray):
+        # Group the array by value. Example: [['No', 'No', 'No'], ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes']]
+        groupByClass = [list(g[1]) for g in groupby(sorted(inputArray, key=len), len)]
+
+        print('groupByClass', groupByClass)
+        return groupByClass
 
     def giniStart(self, outputDataset):
-        groupByClass = [list(g[1]) for g in groupby(sorted(outputDataset, key=len), len)]
+        totalRecords = len(outputDataset)
 
-        print(groupByClass)
+        proportionSum = 0
+        for group in self.groupByValue(outputDataset):
+            print('Each Output class group', group)
+            proportionSum = proportionSum + len(group)/totalRecords * len(group)/totalRecords
 
+        giniIndex = 1 - proportionSum
+        return giniIndex
 
 
     # Calculate Gini index for the 'Input Attribute/Feature/Candiate'
@@ -37,8 +49,15 @@ class Cart:
     # USA	        No
     # USA	        Yes
     def giniIndex(self, inputAttributeSplitDataset):
-        n_instances = float(sum([len(group) for group in inputAttributeSplitDataset]))
-        print(n_instances)
+        # Total rows of the given dataset
+        totalRecords = len(inputAttributeSplitDataset)
+
+        # Group list by Output class. i.e. by 'no' and 'yes' groups
+        groupByClass = [list(g[1]) for g in groupby(sorted(inputAttributeSplitDataset, key=len), len)]
+        #inputAttributeValueList = self.extractColumnValuesAtIndex(inputAttributeSplitDataset, 0)
+        print('inputAttributeValueList 0:', groupByClass)
+
+        print('')
 
 
 def main():
@@ -46,16 +65,19 @@ def main():
         # Training Dataset Transform CSV to array
         # Origin,Salary,Married,Age,Allowed
         trainingSet = cart.getTrainingDataset()
+        print('trainingSet: ', trainingSet)
 
         # Get the output class dataset
-        outputClassList = cart.extractOutputClassSet(trainingSet)
-        print('outputClassList:', outputClassList)
+        outputClassList = cart.extractColumnValuesAtIndex(trainingSet, -1)
+        print('extractColumnValuesAtIndex -1:', outputClassList)
 
         # Get Gini Start value
-        cart.giniStart(outputClassList)
+        giniStartIndex  = cart.giniStart(outputClassList)
+        print('gini Start Index', giniStartIndex)
 
-        print(trainingSet)
+        # Gini Index for Input Attribute candidate 'Origin/Country'
         cart.giniIndex(['1', '1'])
+
         #
 
 
