@@ -1,6 +1,8 @@
 import csv
 from itertools import groupby
 import collections
+import numpy as np
+import pandas as pd
 
 class Cart:
     outputClassValues = ['Yes', 'No']
@@ -8,19 +10,26 @@ class Cart:
     def __init__(self):
         print('Init')
 
+    def conv(s):
+        try:
+            s=float(s)
+        except ValueError:
+            pass
+        return s
+
     def getTrainingDataset(self):
         trainingDataset = []
-        with open('trainingset.csv', 'r') as trainingSet:
-            reader = csv.reader(trainingSet, delimiter=',')
-            for row in reader:
-                trainingDataset.append(row)
-        return trainingDataset
+        cursor = []
+        df = pd.read_csv('trainingset.csv', header=None)
+        numpyMatrix = df.as_matrix()
+        print('trainingset.csv as NumPy Array using Pandas', numpyMatrix)
+        return numpyMatrix
 
     def extractInputAttributeAndOutputClass(self, totalTrainingDataset, inputAttributeIndex):
         print('inputAttributeIndex', inputAttributeIndex)
         subset = []
         for trainingRow in totalTrainingDataset:
-            print('trainingRow', trainingRow)
+            #print('trainingRow', trainingRow)
             subset.append([trainingRow[inputAttributeIndex], trainingRow[-1]])
         return subset
 
@@ -59,6 +68,27 @@ class Cart:
         print('attributeDic', attributeDic)
         return attributeDic
 
+    # Input Attribute Value('Home Country') Subset = [['Home Country', 'Yes'], ['Home Country', 'Yes'], ['Home Country', 'No']]
+    def giniSubsetIndex(self, totalDatasetRecordCount, valueSubset):
+        valueSubsetCount = len(valueSubset)
+        # Proportion of subset/Dataset
+        # Example: Proportion(count(Origin=Home Country) on total dataset/count(Total rows in dataset))
+        attributeProportionInTotalDataset = valueSubsetCount/totalDatasetRecordCount
+
+        giniIndexForAttributeIndexValue = 0
+        for outputClass in self.outputClassValues:
+            # Get the count of matches for each output category
+            outputClassCount = sum(x.count(outputClass) for x in valueSubset)
+            print('outputClass', outputClass, 'count', outputClassCount)
+            outputClassProportionInAttributeValueSet = outputClassCount/valueSubsetCount
+            giniIndexForAttributeIndexValue = giniIndexForAttributeIndexValue +  outputClassProportionInAttributeValueSet * outputClassProportionInAttributeValueSet
+
+        # Gini Calculation for specific attribute value subset
+        # Proportion(count(Origin=Home Country) on total dataset/count(Total rows in dataset)) * G(Origin=Home Country)
+        giniValue = attributeProportionInTotalDataset * (1 - giniIndexForAttributeIndexValue)
+        print('GINI Input Attribute Value', giniValue)
+        return giniValue
+
     # Calculate Gini index for the 'Input Attribute/Feature/Candiate'
     # Example: Calculate Gini for Input Attribute = 'Country'
     # Country	    Allowed?
@@ -82,21 +112,43 @@ class Cart:
         # Transform to dictionary by 'Input Attribute Value'
         attributeDic = self.attributeDic(inputAttributeSplitDataset)
 
-        for key, value in attributeDic.items():
-            print('value', value)
-            attributeCount = len(value)
-            # Example: Proportion(count(Origin=Home Country) on total dataset/count(Total rows in dataset))
-            attributeProportionInTotalDataset = attributeCount/totalRecords
+        attributeKeyValue = next(iter(attributeDic))
+        print('type(key) == str or type(key) == bool', type(attributeKeyValue))
+        # Catogirical values, i.e. String and Boolean
+        if ((type(attributeKeyValue) is str or type(attributeKeyValue) is bool)):
+            for key, value in attributeDic.items():
+                giniIndexResult = giniIndexResult + self.giniSubsetIndex(totalRecords, value)
+        if (type(attributeKeyValue) is int or type(attributeKeyValue) is float):
+            # Sort the list
+            #dtype = [('value', float), ('opClass', str)]
+            npInputAttributeSplitDataset = np.array(inputAttributeSplitDataset)
+            npInputAttributeSplitDataset = npInputAttributeSplitDataset[npInputAttributeSplitDataset[:,0].argsort()]
+            print('sorted data', npInputAttributeSplitDataset)
 
-            giniIndexForAttributeIndexValue = 0
-            for outputClass in self.outputClassValues:
-                outputClassCount = sum(x.count(outputClass) for x in value)
-                print('attribute', key, 'outputClass', outputClass, 'count', outputClassCount)
-                outputClassProportionInAttributeValueSet = outputClassCount/attributeCount
-                giniIndexForAttributeIndexValue = giniIndexForAttributeIndexValue +  outputClassProportionInAttributeValueSet * outputClassProportionInAttributeValueSet
+            # Create a new list with median calculation
+            npOnlyAttributeValues = npInputAttributeSplitDataset[:,0]
+            npOnlyAttributeValues = np.array(npOnlyAttributeValues, dtype=np.int64)
+            print('All attribute values', npOnlyAttributeValues)
+            npMedianAdjacentValues = (npOnlyAttributeValues[1:] + npOnlyAttributeValues[:-1]) / 2
+            print('median', npMedianAdjacentValues)
 
-            giniIndexResult = giniIndexResult + attributeProportionInTotalDataset * (1 - giniIndexForAttributeIndexValue)
+            # Calculate the gini for each value as a binary classification(LEFT and RIGHT)
+            for value in npMedianAdjacentValues:
+                print('value', value)
+                dict = {'<=': [], '>':[]}
 
+                for inputValue in inputAttributeSplitDataset:
+                    if (float(inputValue[0]) <= value):
+                        dict.get('<=').append(inputValue)
+                    else:
+                        dict.get('>').append(inputValue)
+
+                print('dict', dict)
+                for key, value in dict.items():
+                    giniIndexResult = giniIndexResult + self.giniSubsetIndex(totalRecords, value)
+
+            # Return the best attribute gini index
+            print('continuous values')
         return giniIndexResult
 
     def giniGain(self, giniStart, giniAttributeIndex):
@@ -107,7 +159,7 @@ def main():
         # Training Dataset Transform CSV to array
         # Origin,Salary,Married,Age,Allowed
         trainingSet = cart.getTrainingDataset()
-        print('trainingSet: ', trainingSet)
+        #print('trainingSet: ', trainingSet)
 
         # Get the output class dataset
         outputClassList = cart.extractColumnValuesAtIndex(trainingSet, -1)
@@ -121,6 +173,7 @@ def main():
         # Get specific input attribute subset along with output class
 
         for index in range(len(trainingSet[0]) -1):
+            print('####################################################   START   ###########################################################')
         #for index, item in trainingSet[:-1]:
             inputAttributeSubset = cart.extractInputAttributeAndOutputClass(trainingSet, index)
             print('inputAttributeSubset', inputAttributeSubset)
@@ -133,6 +186,7 @@ def main():
             giniGain = cart.giniGain(giniStartIndex, giniIndexResult)
             print('giniGain for attribute at index', index, giniGain)
             giniGainDic.update({index: giniGain})
+            print('####################################################   END    ###########################################################')
 
         print('All Gini Gains', giniGainDic)
 
