@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 class Cart:
-    outputClassValues = ['Yes', 'No']
+    outputClassValues = [1, 0]
 
     def __init__(self):
         print('Init')
@@ -39,14 +39,14 @@ class Cart:
     def groupByValue(self, inputArray):
         # I/P: ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'No', 'Yes', 'No', 'Yes']
         # Group the array by value. Example O/P: [['No', 'No', 'No'], ['Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes']]
-        groupByClass = [list(g[1]) for g in groupby(sorted(inputArray, key=len), len)]
+        groupByClass = [list(j) for i, j in groupby(np.sort(inputArray))]
 
         print('groupByClass', groupByClass)
         return groupByClass
 
     def giniStart(self, outputDataset):
         totalRecords = len(outputDataset)
-
+        print('Total Dataset count', totalRecords)
         proportionSum = 0
         for group in self.groupByValue(outputDataset):
             print('Each Output class group', group)

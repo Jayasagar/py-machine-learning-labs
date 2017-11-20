@@ -1,10 +1,10 @@
-Home Country,40000,Yes,24,Yes
-India,55000,Yes,27,Yes
-USA,50000,No,30,Yes
-India,65000,Yes,32,Yes
-Home Country,75000,No,34,Yes
-Home Country,35000,Yes,30,No
-India,50000,No,27,No
-India,65000,No,30,Yes
-USA,40000,No,24,No
-USA,55000,Yes,28,Yes
+Home Country,40000,Yes,24,true
+India,55000,Yes,27,true
+USA,50000,No,30,true
+India,65000,Yes,32,true
+Home Country,75000,No,34,true
+Home Country,35000,Yes,30,false
+India,50000,No,27,false
+India,65000,No,30,true
+USA,40000,No,24,false
+USA,55000,Yes,28,true
