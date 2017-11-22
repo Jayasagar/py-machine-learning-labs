@@ -4,6 +4,24 @@ import collections
 import numpy as np
 import pandas as pd
 
+class Node:
+    # attributeName: Input Attribute name in dataset
+    # conditionValues: Predicate values required to check the match
+    # condition: Operator to use on predicate expression
+    # classLabel: Applicable to the leaf node, this is to produce output results!
+    #
+    def __init__(self, attribuIndex, attributeName, conditionValues, condition, leftNode, rightNode, classLabel):
+        self.attributeName = attributeName
+        self.attribuIndex = attribuIndex
+        self.conditionValues = conditionValues
+        self.condition = condition
+        self.leftNode = leftNode
+        self.rightNode = rightNode
+        self.classLabel = classLabel
+
+    def __repr__(self):
+        return repr('attributeName: ' + self.attributeName) + repr(' condition: ' + self.condition) + ', conditionValues: ' + repr(self.conditionValues)
+
 class Cart:
     outputClassValues = [1, 0]
 
@@ -24,6 +42,26 @@ class Cart:
         numpyMatrix = df.as_matrix()
         print('trainingset.csv as NumPy Array using Pandas', numpyMatrix)
         return numpyMatrix
+
+    def split(self, arr, cond):
+        return [arr[cond], arr[~cond]]
+
+    def splitDatasetByMatch(self, dataset, matchIndex, valuesToMatch, condition):
+        if ('EQ' == condition):
+            splitDataSetForLeftAndRigth = self.split(dataset, dataset[:, matchIndex] == valuesToMatch)
+            print('splitDatasetByMatch', splitDataSetForLeftAndRigth)
+            return splitDataSetForLeftAndRigth
+        if ('LTE' == condition):
+            splitDataSetForLeftAndRigth = self.split(dataset, dataset[:, matchIndex] <= valuesToMatch)
+            print('splitDatasetByMatch', splitDataSetForLeftAndRigth)
+            return splitDataSetForLeftAndRigth
+        if ('GTE' == condition):
+            splitDataSetForLeftAndRigth = self.split(dataset, dataset[:, matchIndex] > valuesToMatch)
+            print('splitDatasetByMatch', splitDataSetForLeftAndRigth)
+            return splitDataSetForLeftAndRigth
+
+    def excludeColumnAtIndex(self, dataset, indexToExclude):
+        print('exclude at:', indexToExclude,  np.delete(dataset, indexToExclude, axis=1))
 
     def extractInputAttributeAndOutputClass(self, totalTrainingDataset, inputAttributeIndex):
         print('inputAttributeIndex', inputAttributeIndex)
@@ -154,12 +192,65 @@ class Cart:
     def giniGain(self, giniStart, giniAttributeIndex):
         return giniStart - giniAttributeIndex
 
+    def recursive_split(self, node, dataset):
+        self.splitDatasetByMatch(dataset, node.attribuIndex, node.conditionValues)
+
+        self.excludeColumnAtIndex(dataset, node.attribuIndex)
+        # Stopping condition
+            ## Dataset length is below the MINIMUM Threshold?
+            ## All the records in dataset has same ATTRIBUTE values or CLASS labels
+        # Process Dataset to find the BEST attribute to construct LEFT Node
+
+            ## recursive_split(LEFTNode, its dataset)
+        # Process Dataset to find the BEST attribute to construct RIGHT Node
+            ## recursive_split(LEFTNode, its dataset)
+        print('recursive_split')
+
+    def bestAttributeNode(self, dataset):
+        # Get the output class dataset
+        outputClassList = self.extractColumnValuesAtIndex(dataset, -1)
+        print('extractColumnValuesAtIndex -1:', outputClassList)
+
+        # Get Gini Start value
+        giniStartIndex  = self.giniStart(outputClassList)
+        print('gini Start Index', giniStartIndex)
+
+        giniGainDic = {}
+        bestGainIndex = -1
+        bestGainValue = -1
+        # Get specific input attribute subset along with output class
+        for index in range(len(dataset[0]) -1):
+            print('####################################################   START   ###########################################################')
+            #for index, item in trainingSet[:-1]:
+            inputAttributeSubset = self.extractInputAttributeAndOutputClass(dataset, index)
+            print('inputAttributeSubset', inputAttributeSubset)
+
+            # Gini Index for Input Attribute candidate 'Origin/Country'
+            giniIndexResult = self.giniIndex(inputAttributeSubset)
+            print('giniIndexResult for attribute at index', index, giniIndexResult)
+
+            # Gini gain for attribute
+            giniGain = self.giniGain(giniStartIndex, giniIndexResult)
+            if (giniGain > bestGainValue):
+                bestGainIndex = index
+            print('giniGain for attribute at index', index, giniGain)
+            giniGainDic.update({index: giniGain})
+            print('####################################################   END    ###########################################################')
+
+        print('All Gini Gains', giniGainDic)
+        print('Root node set', self.extractInputAttributeAndOutputClass(dataset, bestGainIndex))
+        node = Node(2, 'Married', ['Yes'], 'EQ', None, None, None)
+        print('node', node)
+
+        return node
+
 def main():
         cart = Cart()
         # Training Dataset Transform CSV to array
         # Origin,Salary,Married,Age,Allowed
         trainingSet = cart.getTrainingDataset()
-        #print('trainingSet: ', trainingSet)
+        #print('Exclude Test: ', cart.excludeColumnAtIndex(trainingSet, 1))
+        #cart.splitDatasetByMatch(trainingSet, 2, ['Yes'], 'EQ')
 
         # Get the output class dataset
         outputClassList = cart.extractColumnValuesAtIndex(trainingSet, -1)
@@ -170,8 +261,9 @@ def main():
         print('gini Start Index', giniStartIndex)
 
         giniGainDic = {}
+        bestGainIndex = -1
+        bestGainValue = -1
         # Get specific input attribute subset along with output class
-
         for index in range(len(trainingSet[0]) -1):
             print('####################################################   START   ###########################################################')
         #for index, item in trainingSet[:-1]:
@@ -184,10 +276,20 @@ def main():
 
             # Gini gain for attribute
             giniGain = cart.giniGain(giniStartIndex, giniIndexResult)
+            if (giniGain > bestGainValue):
+                bestGainIndex = index
             print('giniGain for attribute at index', index, giniGain)
             giniGainDic.update({index: giniGain})
             print('####################################################   END    ###########################################################')
 
         print('All Gini Gains', giniGainDic)
+        print('Root node set', cart.extractInputAttributeAndOutputClass(trainingSet, bestGainIndex))
+        rooNode = Node(2, 'Married', ['Yes'], 'EQ', None, None, None)
+        print('rooNode', rooNode)
+
+
+
+
+
 
 if __name__ == "__main__": main()
