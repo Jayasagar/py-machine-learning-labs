@@ -32,3 +32,6 @@ predictions = [0.000, 0.166, 0.333]
 error = rootMeanSquaredError(np.array(predictions), np.array(actuals))
 
 print('Error', error)
+
+def meanAbsoluteError(predictions, actuals):
+  return np.sum(np.abs(predictions, actuals))
