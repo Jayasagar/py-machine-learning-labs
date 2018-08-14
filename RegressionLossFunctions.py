@@ -25,13 +25,24 @@ def rootMeanSquaredError(predictions, actuals):
     return square_root_of_mean_result
 
 
+def meanAbsoluteError(predictions, actuals):
+    # return np.sum(np.absolute(predictions - actuals))
+    return np.absolute(predictions - actuals).mean()
+
 actuals = [0.000, 0.254, 0.998]
 predictions = [0.000, 0.166, 0.333]
 
 
 error = rootMeanSquaredError(np.array(predictions), np.array(actuals))
+print('RMSE Error:', error)
 
-print('Error', error)
+print('MAE Error:', meanAbsoluteError(np.array(predictions), np.array(actuals)))
 
-def meanAbsoluteError(predictions, actuals):
-  return np.sum(np.abs(predictions, actuals))
+# Outlier scenario
+
+actuals = [0.000, 0.254, 0.998]
+predictions = [0.000, 0.166, 15]
+
+print('Outlier RMSE Error:', rootMeanSquaredError(np.array(predictions), np.array(actuals)))
+
+print('Outlier MAE Error:', meanAbsoluteError(np.array(predictions), np.array(actuals)))
