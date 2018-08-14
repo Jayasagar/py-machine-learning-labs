@@ -55,3 +55,20 @@ print sub_array_copy
 sub_array_copy[0][0][0] = 19
 
 print sub_array
+
+# Basic Dot Product
+
+a = np.array([
+ [1, 2]
+ ])
+print a.shape == (1,2)
+b = np.array([
+ [3, 4],
+ [5, 6]
+ ])
+print b.shape == (2,2)
+
+# Multiply
+mm = np.dot(a,b)
+print mm == [13, 16]
+print mm.shape == (1,2)
