@@ -49,26 +49,26 @@ sub_array[0][0][0] = 15
 # Creating copies of arrays
 sub_array_copy = threeDimensional[:2, :2, :2].copy()
 
-print sub_array_copy
+print(sub_array_copy)
 
 # Change any value, now it wont change
 sub_array_copy[0][0][0] = 19
 
-print sub_array
+print(sub_array)
 
 # Basic Dot Product
 
 a = np.array([
  [1, 2]
  ])
-print a.shape == (1,2)
+print(a.shape == (1,2))
 b = np.array([
  [3, 4],
  [5, 6]
  ])
-print b.shape == (2,2)
+print(b.shape == (2,2))
 
 # Multiply
 mm = np.dot(a,b)
-print mm == [13, 16]
-print mm.shape == (1,2)
+print(mm == [13, 16])
+print(m.shape == (1,2))
