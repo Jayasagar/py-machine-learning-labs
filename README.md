@@ -1,5 +1,12 @@
 ### Experiment lab implementations for Machine Learning algorithms!
 
+This project use `pipenv` project management build tool
+
+commands used:
+* pipenv --three: Which will make use of Python 3 version and created `Pipfile` to describe project like package.json in node world.
+
+
+
 ### Things to try
 * pylab : To plot the data
 * matplotlib : Python 2D plotting library
