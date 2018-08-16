@@ -4,6 +4,8 @@ from numpy.random import randn
 from numpy import mean
 from numpy import std
 
+from matplotlib import pyplot
+
 # seed the random number generator
 seed(1)
 # Generate Normal distribution data
@@ -14,3 +16,9 @@ data = 5 * randn(100) + 50
 print ('data', data)
 # summarize
 print('mean=%.3f stdv=%.3f' % (mean(data), std(data)))
+
+######### Histogram plot ##########
+
+pyplot.hist(data)
+pyplot.show()
+
