@@ -3,7 +3,7 @@
 ### Things to try
 * pylab : To plot the data
 * matplotlib : Python 2D plotting library
-* 
+* statsmodels: http://www.statsmodels.org/dev/install.html
 
 ### Num Py Examples
 ##### Where 
