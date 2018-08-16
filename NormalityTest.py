@@ -5,6 +5,9 @@ from numpy import mean
 from numpy import std
 
 from statsmodels.graphics.gofplots import qqplot
+
+import matplotlib
+matplotlib.use('TkAgg')
 from matplotlib import pyplot
 
 # Reference: https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
