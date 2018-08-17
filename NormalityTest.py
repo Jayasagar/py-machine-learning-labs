@@ -4,6 +4,8 @@ from numpy.random import randn
 from numpy import mean
 from numpy import std
 
+from scipy.stats import shapiro
+
 from statsmodels.graphics.gofplots import qqplot
 
 import matplotlib
@@ -30,5 +32,17 @@ print('mean=%.3f stdv=%.3f' % (mean(data), std(data)))
 
 ####### Quantile-Quantile Plo t###########
 #  Q-Q plot, or QQ plot
-qqplot(data, line='s')
-pyplot.show()
+# qqplot(data, line='s')
+# pyplot.show()
+
+####### Sharipo-Wilk Normality Test #######
+
+stat, p = shapiro(data)
+
+print('Statistics=%.3f, p-value=%.3f', stat, p)
+# Interpret
+alpha = 0.05
+if p > alpha:
+    print('Sample looks Gaussian (fail to reject H0(null-hypothesis))')
+else:
+    print('Sample doesnot look like Gaussian(reject H0)')
