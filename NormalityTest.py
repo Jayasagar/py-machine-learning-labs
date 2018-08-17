@@ -5,6 +5,7 @@ from numpy import mean
 from numpy import std
 
 from scipy.stats import shapiro
+from scipy.stats import normaltest
 
 from statsmodels.graphics.gofplots import qqplot
 
@@ -46,3 +47,15 @@ if p > alpha:
     print('Sample looks Gaussian (fail to reject H0(null-hypothesis))')
 else:
     print('Sample doesnot look like Gaussian(reject H0)')
+
+####### D`Agostino's K2 Normality Test #######
+
+agostino_stat, agostino_p = normaltest(data)
+print('D-Agostino k2 Test: Statistics = %.3f, p-value=%.3f', stat, p)
+
+#Interpret
+agostino_alpha = 0.05
+if agostino_p > agostino_alpha:
+    print ('Looks like Gaussian distribution(fail to reject H0)')
+else :
+    print('Does not looks like Gaussian distribution(reject H0)')
