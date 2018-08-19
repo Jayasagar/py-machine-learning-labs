@@ -6,6 +6,10 @@ class NormalityFrameowrk:
 
     def main(self):
         print('Hello')
+        dataset = self.csv.read_from_csv()
+
+        # print('CSV Read Describe data:', dataset)
+        
 
 normality_framework = NormalityFrameowrk()
 normality_framework.main()
