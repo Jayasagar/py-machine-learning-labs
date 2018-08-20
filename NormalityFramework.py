@@ -9,6 +9,7 @@ from scipy.stats import shapiro
 
 from CSVService import CSVService
 
+# reference: https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
 class NormalityFrameowrk:
     def __init__(self):
         self.csv = CSVService()
