@@ -9,4 +9,10 @@ grades = np.array([
     [99,  87]
 ])
 
-    
+
+print(grades[1,0])
+print(grades[-1,0])
+
+#First column of each entry
+
+print(grades[:, :1])
