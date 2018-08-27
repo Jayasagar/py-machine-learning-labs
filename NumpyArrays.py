@@ -16,3 +16,5 @@ print(grades[-1,0])
 #First column of each entry
 
 print(grades[:, :1])
+
+print(grades[0])
