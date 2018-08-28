@@ -17,4 +17,14 @@ print(grades[-1,0])
 
 print(grades[:, :1])
 
+# Supplying Fewer Indices Than Dimensions
 print(grades[0])
+
+d3_array = np.array([[[0, 1],
+    [2, 3]],
+    [[4, 5],
+    [6, 7]]])
+
+print ('No of Dimensions', d3_array.ndim)
+
+print('d3_array[1]:', d3_array[1]) # which recall is shorthand for d3_array[1, :, :]
