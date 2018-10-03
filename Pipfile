@@ -10,6 +10,7 @@ statsmodels = "*"
 scipy = "*"
 scikit-learn = "*"
 matplotlib = "*"
+psutil = "*"
 
 [dev-packages]
 
