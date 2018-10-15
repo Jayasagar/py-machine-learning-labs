@@ -1,6 +1,12 @@
 ##### DON'T DO THIS
 `!pip install numpy`
 
+#### Using LaTeX for forumlas
+* https://www.latex-project.org/help/documentation/amsldoc.pdf
+When you write LaTeX in a Markdown cell, it will be rendered as a formula using MathJax.
+
+
+
 ##### Best artcile to refer to understand jupyter internals
 Ref: [https://jakevdp.github.io/blog/2017/12/05/installing-python-packages-from-jupyter/](Ref: https://jakevdp.github.io/blog/2017/12/05/installing-python-packages-from-jupyter/)
 
