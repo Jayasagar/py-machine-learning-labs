@@ -27,3 +27,10 @@ np.__path__`
 
 # This will list all magic commands
 `%lsmagic`
+
+### References
+List of all Magic commands for Jupyrer
+* https://ipython.readthedocs.io/en/stable/interactive/magics.html
+
+Jupyter Shortcuts and Tips
+* https://www.dataquest.io/blog/jupyter-notebook-tips-tricks-shortcuts/
