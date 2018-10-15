@@ -4,7 +4,7 @@
 #### Using LaTeX for forumlas
 * https://www.latex-project.org/help/documentation/amsldoc.pdf
 When you write LaTeX in a Markdown cell, it will be rendered as a formula using MathJax.
-
+* https://www.mathjax.org/
 
 
 ##### Best artcile to refer to understand jupyter internals
